@@ -2,13 +2,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.io.FileWriter;
 
 
 
 public class Main {
+
     static Scanner scanner = new Scanner(System.in);
+    static File file = new File("not.txt");
+
 
     public static void main(String[] args) {
 
@@ -19,14 +23,29 @@ public class Main {
             System.out.println("3. Edit note");
             System.out.println("4. Delete note");
             System.out.println("5. Exit");
-            int option = scanner.nextInt();
-            scanner.nextLine();
 
-            if (option > 4 || option < 1){
+            // Invalid option, needed outside 'try'.
+            int option = -1;
+
+            try {
+
+                option = scanner.nextInt();
+                scanner.nextLine();
+
+            } catch(InputMismatchException e) {
+
+                System.out.println("Invalid input! Please enter a number!");
+                scanner.nextLine();
+                continue;
+            }
+
+            if (option > 5 || option < 1){
                 System.out.println("Invalid option");
+                continue;
             }
 
             switch(option){
+
                 case 1:
                     addNote();
                     break;
@@ -60,7 +79,7 @@ public class Main {
         public static void addNote(){
 
 
-            // This code stores what the user typed into the console and wants to save it in a file.
+            // Stores the user's input from the console to be saved in a file.
 
             System.out.println("Please enter what you want to save: ");
             String text;
@@ -86,19 +105,16 @@ public class Main {
 
             // This code opens the file, reads the text, and displays it on the screen.
             try {
-                File file = new File("not.txt");
 
-                if ( !file.exists() || file.length() == 0 ) {
+                if (isFileEmptyOrMissing()){
                     System.out.println("There is no present note!");
                     return;
                 }
 
-                Scanner scannerFile = new Scanner(file);
-                while (scannerFile.hasNextLine()) {
-                    System.out.println(scannerFile.nextLine());
-
+                ArrayList<String> notes = loadNotesFromFile();
+                for (int i = 0; i < notes.size(); i++) {
+                    System.out.println((i + 1) + ". " + notes.get(i));
                 }
-                scannerFile.close();
 
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred while reading the note!" + e.getMessage());
@@ -110,28 +126,21 @@ public class Main {
 
         // This code allows the user to edit their notes and handles possible errors.
 
-            // Here, the notes from the file are stored in an ArrayList.
+            // The notes from the file are stored in an ArrayList.
             try{
-                File file = new File("not.txt");
 
-                if ( !file.exists() || file.length() == 0 ) {
+
+                if (isFileEmptyOrMissing()){
                     System.out.println("There is no present note!");
                     return;
                 }
 
-                // I created an ArrayList and added the notes to it.
-                ArrayList<String> notes = new ArrayList<>();
-                Scanner scannerFile = new Scanner(file);
 
-                while (scannerFile.hasNextLine()) {
-
-                    notes.add(scannerFile.nextLine());
-                }
-                scannerFile.close();
+                // Loads notes from the file into an ArrayList.
+                ArrayList<String> notes = loadNotesFromFile();
 
 
-
-                // This lists the notes on the screen with their corresponding numbers.
+                // Lists the notes on the screen with their corresponding numbers.
                 for (int i = 0; i < notes.size(); i++) {
                     System.out.println( (i + 1) + ". " + notes.get(i));
                 }
@@ -140,35 +149,39 @@ public class Main {
                 // Lets the user select a note to edit and updates it with a new note.
                 int index = -1;
 
-                 while (true) {
+                while (true) {
+
                      System.out.println("Please enter the note you want to edit: ");
-                     int choice = scanner.nextInt();
-                     scanner.nextLine();
+                     try {
+                         int choice = scanner.nextInt();
+                         scanner.nextLine();
 
-                    index = choice - 1;
+                         index = choice - 1;
 
-                     if (index >= 0 && index < notes.size()) {
-                         break;
-                     }else {
-                         System.out.println("Invalid choice! Try again!");
+                         if (index >= 0 && index < notes.size()) {
+                             break;
+                         }else {
+                             System.out.println("Invalid choice! Try again!");
+                         }
+
+                     } catch(InputMismatchException e) {
+                         System.out.println("Invalid input! Please enter a number!");
+                         scanner.nextLine();
                      }
-                 }
+
+                }
 
 
                 System.out.println("Please enter the new note: ");
                 String newNote = scanner.nextLine();
-
                 notes.set(index, newNote);
+
                 System.out.println("Note updated successfully!");
 
 
 
                 // Updates the file with the modified list.
-                FileWriter fileWriter = new FileWriter("not.txt", false);
-                for (String note : notes) {
-                    fileWriter.write(note + System.lineSeparator());
-                }
-                fileWriter.close();
+                saveNotesToFile(notes);
 
 
             }catch (IOException e) {
@@ -179,28 +192,21 @@ public class Main {
 
         public static void deleteNote(){
 
-            // Here, the notes from the file are stored in an ArrayList.
+            // The notes from the file are stored in an ArrayList.
             try{
-                File file = new File("not.txt");
 
-                if ( !file.exists() || file.length() == 0 ) {
+
+                if (isFileEmptyOrMissing()){
                     System.out.println("There is no present note!");
                     return;
                 }
 
-                // I created an ArrayList and added the notes to it.
-                ArrayList<String> notes = new ArrayList<>();
-                Scanner scannerFile = new Scanner(file);
 
-                while (scannerFile.hasNextLine()) {
-
-                    notes.add(scannerFile.nextLine());
-                }
-                scannerFile.close();
+                // Loads notes from the file into an ArrayList.
+                ArrayList<String> notes = loadNotesFromFile();
 
 
-
-                // This lists the notes on the screen with their corresponding numbers.
+                // Lists the notes on the screen with their corresponding numbers.
                 for (int i = 0; i < notes.size(); i++) {
                     System.out.println( (i + 1) + ". " + notes.get(i));
                 }
@@ -224,19 +230,13 @@ public class Main {
                 }
 
 
-
-
                 notes.remove(index);
                 System.out.println("Note deleted successfully!");
 
 
 
                 // Updates the file with the modified list.
-                FileWriter fileWriter = new FileWriter("not.txt", false);
-                for (String note : notes) {
-                    fileWriter.write(note + System.lineSeparator());
-                }
-                fileWriter.close();
+                saveNotesToFile(notes);
 
 
             }catch (IOException e) {
@@ -248,6 +248,39 @@ public class Main {
 
 
 
-    }
+
+    // Helper methods to reduce duplicate code
+
+        public static boolean isFileEmptyOrMissing(){
+            // Checks if the file doesn't exist or is empty.
+            return !file.exists() || file.length() == 0;
+
+        }
+
+        public static ArrayList<String> loadNotesFromFile() throws FileNotFoundException {
+            ArrayList<String> notes = new ArrayList<>();
+            Scanner scannerFile = new Scanner(file);
+
+            while (scannerFile.hasNextLine()) {
+                notes.add(scannerFile.nextLine());
+            }
+
+            scannerFile.close();
+            return notes;
+        }
+
+        public static void saveNotesToFile(ArrayList<String> notes) throws IOException {
+            FileWriter fileWriter = new FileWriter(file, false);
+
+            for (String note : notes) {
+                fileWriter.write(note + System.lineSeparator());
+            }
+
+            fileWriter.close();
+        }
+
+
+
+}
 
 
