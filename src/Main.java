@@ -55,14 +55,12 @@ public class Main {
     }
 
 
-        ///
-        // These methods will help the user to do whatever they want.
-        ///
+
 
         public static void addNote(){
 
 
-            // This code stores what the user typed to console and wants to save in a file.
+            // This code stores what the user typed into the console and wants to save it in a file.
 
             System.out.println("Please enter what you want to save: ");
             String text;
@@ -70,7 +68,7 @@ public class Main {
 
 
 
-            // This code will use the previous code and write what the user wants to save to a file.
+            // This code writes the user's input to a file.
             try {
                 FileWriter fileWriter = new FileWriter("not.txt", true);
                 fileWriter.write(text + System.lineSeparator());
@@ -86,7 +84,7 @@ public class Main {
         public static void showNotes(){
 
 
-            // This code will open the file and read the text then shows it to the screen.
+            // This code opens the file, reads the text, and displays it on the screen.
             try {
                 File file = new File("not.txt");
 
@@ -110,9 +108,9 @@ public class Main {
         public static void editNotes(){
 
 
-        // This code will let the user edit their notes and tries to catch errors.
+        // This code allows the user to edit their notes and handles possible errors.
 
-            // Here file's notes are being stored to an ArrayList and then being named.
+            // Here, the notes from the file are stored in an ArrayList.
             try{
                 File file = new File("not.txt");
 
@@ -121,7 +119,7 @@ public class Main {
                     return;
                 }
 
-                // I created an ArrayList and add the note to it.
+                // I created an ArrayList and added the notes to it.
                 ArrayList<String> notes = new ArrayList<>();
                 Scanner scannerFile = new Scanner(file);
 
@@ -133,13 +131,13 @@ public class Main {
 
 
 
-                // This lists the notes on the screen with numbers.
+                // This lists the notes on the screen with their corresponding numbers.
                 for (int i = 0; i < notes.size(); i++) {
                     System.out.println( (i + 1) + ". " + notes.get(i));
                 }
 
 
-                // Lets the user choose which list they want to edit and edits them with a new note.
+                // Lets the user select a note to edit and updates it with a new note.
                 int index = -1;
 
                  while (true) {
@@ -165,7 +163,7 @@ public class Main {
 
 
 
-                // Updates the list.
+                // Updates the file with the modified list.
                 FileWriter fileWriter = new FileWriter("not.txt", false);
                 for (String note : notes) {
                     fileWriter.write(note + System.lineSeparator());
@@ -181,7 +179,7 @@ public class Main {
 
         public static void deleteNote(){
 
-            // Here file's notes are being stored to an ArrayList and then being named.
+            // Here, the notes from the file are stored in an ArrayList.
             try{
                 File file = new File("not.txt");
 
@@ -190,7 +188,7 @@ public class Main {
                     return;
                 }
 
-                // I created an ArrayList and add the note to it.
+                // I created an ArrayList and added the notes to it.
                 ArrayList<String> notes = new ArrayList<>();
                 Scanner scannerFile = new Scanner(file);
 
@@ -202,13 +200,13 @@ public class Main {
 
 
 
-                // This lists the notes on the screen with numbers.
+                // This lists the notes on the screen with their corresponding numbers.
                 for (int i = 0; i < notes.size(); i++) {
                     System.out.println( (i + 1) + ". " + notes.get(i));
                 }
 
 
-                // Lets the user choose which list they want to edit and edits them with a new note.
+                // Lets the user select a note to edit and updates it with a new note.
                 int index = -1;
 
                 while (true) {
@@ -233,7 +231,7 @@ public class Main {
 
 
 
-                // Updates the list.
+                // Updates the file with the modified list.
                 FileWriter fileWriter = new FileWriter("not.txt", false);
                 for (String note : notes) {
                     fileWriter.write(note + System.lineSeparator());
